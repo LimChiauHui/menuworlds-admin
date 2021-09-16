@@ -34,7 +34,8 @@ import {
   ProjectDetails,
   OrderTypeForm,
   DropzoneComponent,
-  OperatingTimeForm
+  OperatingTimeForm,
+  PaymentTypeForm,
 } from './components';
 import { SettingApi } from 'api/SettingApi';
 import { StoreApi } from 'api/StoreApi';
@@ -150,7 +151,7 @@ const EditStorePage = ({ match }) => {
     { value: 'edit', label: 'Detail' },
     { value: 'orderType', label: 'Order Type' },
     { value: 'time', label: 'Operating Time' },
-    { value: 'invoices', label: 'Invoices' }
+    { value: 'payment', label: 'Payment Type' }
   ];
   useEffect(() => {
     getAllSettings();
@@ -326,7 +327,7 @@ const EditStorePage = ({ match }) => {
             operatingSetting={allSettings.open_time_settings}
           />
         )}
-        {tab === 'invoices' && 'Inv'}
+        {tab === 'payment' && <PaymentTypeForm/>}
         {tab === 'orderType' && <OrderTypeForm />}
         {tab === 'edit' && (
           <>
