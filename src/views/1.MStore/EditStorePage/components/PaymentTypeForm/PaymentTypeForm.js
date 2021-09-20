@@ -130,6 +130,7 @@ const PaymentTypeForm = ({paymentSetting}) => {
     }
   };
 
+  
   // const handleResTypeChipDelete = chip => {
   //   setResTypeChips(chips => chips.filter(c => chip !== c));
   // };

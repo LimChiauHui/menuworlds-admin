@@ -10,6 +10,7 @@ export const StoreApi = {
       `api/adminpanel/get-all-restaurant-settings/${restaurant_id}`
     );
   },
+  
   getBank: async () => {
     return axios.get(
       `api/adminpanel/admin-panel-bank`

@@ -221,6 +221,7 @@ const EditStorePage = ({ match }) => {
     }
   };
 
+  
   const handleTabsChange = (event, value) => {
     setTab(value);
   };
