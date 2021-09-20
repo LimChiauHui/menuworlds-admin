@@ -327,7 +327,7 @@ const EditStorePage = ({ match }) => {
             operatingSetting={allSettings.open_time_settings}
           />
         )}
-        {tab === 'payment' && <PaymentTypeForm/>}
+        {tab === 'payment' && <PaymentTypeForm paymentSetting={allSettings.payment_settings}/>}
         {tab === 'orderType' && <OrderTypeForm />}
         {tab === 'edit' && (
           <>

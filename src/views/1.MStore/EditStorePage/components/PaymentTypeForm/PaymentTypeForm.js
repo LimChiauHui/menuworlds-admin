@@ -25,6 +25,7 @@ import { Page } from 'components';
 import { SettingApi } from 'api/SettingApi';
 import { StoreApi } from 'api/StoreApi';
 import { Crypto } from 'utils/crypto/crypto';
+import { CheckBoxOutlineBlank } from '@material-ui/icons';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -86,31 +87,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const PaymentTypeForm = () => {
+const PaymentTypeForm = ({paymentSetting}) => {
+  console.log(paymentSetting)
   const classes = useStyles();
 
   const initialValues = {
-    name: '',
-    phone_number: '',
-    description: '',
-    store_url: '',
-    company_no: '',
-    address: '',
-    postcode: '',
-    latitude: '',
-    longitude: '',
-    tax_number: '',
-    is_veg: 0,
-    is_halal: 0,
-    area_id: '',
-    store_type_id: ''
+    cash_active:0,
+    eWalletM_active:0,
+    online_active:0,
+    fpx_active:0,
+    eWallet_active: 0,
+    bank_name_id:'',
+    bank_account:'',
+    bank_account_number:''
   };
 
   const fileValues = {
-    logo: '',
-    banner: '',
-    ssm_document: '',
-    letter_authorization: ''
+    e_wallet_image:''
   };
 
   const [values, setValues] = useState({ ...initialValues });
@@ -118,9 +111,24 @@ const PaymentTypeForm = () => {
   const [previewFiles, setPreviewFiles] = useState({ ...fileValues });
   const [resTypeChips, setResTypeChips] = useState([]);
   const [resTagChips, setResTagChips] = useState([]);
-  const [areaList, setAreaList] = useState([]);
-  const [storeTypeList, setStoreTypeList] = useState([]);
+  // const [areaList, setAreaList] = useState([]);
+  const [bankList, setBankList] = useState([]);
+  // const [storeTypeList, setStoreTypeList] = useState([]);
   const [tab, setTab] = useState('edit');
+
+  useEffect(() => {
+    getBank();
+    checkInfo();
+  }, []);
+
+  const getBank = async () => {
+    const result = await StoreApi.getBank();
+    if (result.status === 200) {
+      const data = Crypto.decryption(result.data.data);
+      const parseObject = JSON.parse(data);
+      setBankList(parseObject);
+    }
+  };
 
   // const handleResTypeChipDelete = chip => {
   //   setResTypeChips(chips => chips.filter(c => chip !== c));
@@ -178,279 +186,151 @@ const PaymentTypeForm = () => {
   };
 
   const getForm = async () => {
-    const encryptedData = Crypto.encryption(values);
-    const payload = { data: encryptedData, ...files };
-    console.log(payload);
+    console.log(values);
+    // const encryptedData = Crypto.encryption(values);
+    // const payload = { data: encryptedData, ...files };
+    // console.log(payload);
     // const result = await StoreApi.addStore(payload);
     // console.log(result);
   };
 
   const dropzoneList = [
     {
-      name: 'Store Picture',
+      name: 'Wallet Picture',
       docAccept: 'image/jpeg, image/png',
-      type: 'logo'
-    },
-    {
-      name: 'Store Banner',
-      docAccept: 'image/jpeg, image/png',
-      type: 'banner'
-    },
-    { name: 'SSM Document', docAccept: '', type: 'ssm_document' },
-    {
-      name: 'Letter Authorization',
-      docAccept: '',
-      type: 'letter_authorization'
+      type: 'e_wallet_image'
     }
   ];
   return (
     <>
       <Card className={clsx(classes.Froot)}>
-        <CardHeader title="Order Type" />
+        <CardHeader title="Payment Type" />
         <CardContent>
           <form>
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Name"
-                name="name"
-                onChange={event => handleFieldChange(event, 'name', event)}
-                value={values.name}
-                variant="outlined"
-              />
-            </div>
 
-            <div className={classes.FformGroup}>
+          <div variant="outlined" className={classes.FformGroup}>
+              <Typography>Bank Name</Typography>
               <TextField
                 fullWidth
-                label="Phone Number"
-                name="phone_number"
+                name="Bank"
                 onChange={event =>
-                  handleFieldChange(event, 'phone_number', event.target.value)
-                }
-                value={values.phone_number}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Description"
-                name="description"
-                onChange={event =>
-                  handleFieldChange(event, 'description', event.target.value)
-                }
-                value={values.description}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Url"
-                name="store_url"
-                onChange={event =>
-                  handleFieldChange(event, 'store_url', event.target.value)
-                }
-                value={values.store_url}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="SSM No."
-                name="company_no"
-                onChange={event =>
-                  handleFieldChange(event, 'company_no', event.target.value)
-                }
-                value={values.company_no}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Tax No."
-                name="tax_number"
-                onChange={event =>
-                  handleFieldChange(event, 'tax_number', event.target.value)
-                }
-                value={values.tax_number}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Address"
-                name="address"
-                onChange={event =>
-                  handleFieldChange(event, 'address', event.target.value)
-                }
-                value={values.address}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Post Code"
-                name="postcode"
-                onChange={event =>
-                  handleFieldChange(event, 'postcode', event.target.value)
-                }
-                value={values.postcode}
-                variant="outlined"
-              />
-            </div>
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Latitude"
-                name="latitude"
-                onChange={event =>
-                  handleFieldChange(event, 'latitude', event.target.value)
-                }
-                value={values.latitude}
-                variant="outlined"
-              />
-            </div>
-
-            <div className={classes.FformGroup}>
-              <TextField
-                fullWidth
-                label="Store Longitude"
-                name="longitude"
-                onChange={event =>
-                  handleFieldChange(event, 'longitude', event.target.value)
-                }
-                value={values.longitude}
-                variant="outlined"
-              />
-            </div>
-            <div variant="outlined" className={classes.FformGroup}>
-              <Typography>Area</Typography>
-              <TextField
-                fullWidth
-                name="Area"
-                onChange={event =>
-                  handleFieldChange(event, 'area_id', event.target.value)
+                  handleFieldChange(event, 'bank_name_id', event.target.value)
                 }
                 select
-                selected={areaList[0]}
+                selected={bankList[0]}
                 // eslint-disable-next-line react/jsx-sort-props
                 SelectProps={{ native: true }}
-                value={values.area_id}
+                value={values.bank_name_id}
                 variant="outlined">
-                {areaList.map(area => (
-                  <option key={area.id} value={area.id}>
-                    {area.name}
+                {bankList.map(bank => (
+                  <option key={bank.id} value={bank.id}>
+                    {bank.name}
                   </option>
                 ))}
               </TextField>
             </div>
-            <div variant="outlined" className={classes.FformGroup}>
-              <Typography>Store Type</Typography>
+          
+            <div className={classes.FformGroup}>
               <TextField
                 fullWidth
-                name="Store Type"
+                label="Bank Account"
+                name="bank_account"
                 onChange={event =>
-                  handleFieldChange(event, 'store_type_id', event.target.value)
+                  handleFieldChange(event, 'bank_account', event.target.value)
                 }
-                select
-                // eslint-disable-next-line react/jsx-sort-props
-                SelectProps={{ native: true }}
-                value={values.store_type_id}
-                variant="outlined">
-                {storeTypeList.map(storeType => (
-                  <option key={storeType.id} value={storeType.id}>
-                    {storeType.name}
-                  </option>
-                ))}
-              </TextField>
-            </div>
-            <div variant="outlined" className={classes.FformGroup}>
-              <Typography>Logo</Typography>
-              <input
-                type="file"
-                onChange={event =>
-                  handleFileChange('logo', event.target.files[0])
-                }
+                value={values.bank_account}
+                variant="outlined"
               />
-              {previewFiles.logo && (
-                <img className={classes.image} src={previewFiles.logo} />
-              )}
             </div>
-            <div variant="outlined" className={classes.FformGroup}>
-              <Typography>Banner</Typography>
-              <input
-                type="file"
-                onChange={event =>
-                  handleFileChange('banner', event.target.files[0])
-                }
-              />
-              {previewFiles.banner && (
-                <img className={classes.image} src={previewFiles.banner} />
-              )}
-            </div>
-            <div variant="outlined" className={classes.FformGroup}>
-              <Typography>SSM Document</Typography>
-              <input
-                type="file"
-                onChange={event =>
-                  handleFileChange('ssm_document', event.target.files[0])
-                }
-              />
 
-              {previewFiles.ssm_document && (
-                <Link
-                  href={previewFiles.ssm_document}
-                  target="_blank"
-                  rel="noreferrer">
-                  Download Now
-                </Link>
-              )}
+            <div className={classes.FformGroup}>
+              <TextField
+                fullWidth
+                label="Bank Account Number"
+                name="bank_account_number"
+                onChange={event =>
+                  handleFieldChange(event, 'bank_account_number', event.target.value)
+                }
+                value={values.bank_account_number}
+                variant="outlined"
+              />
             </div>
+
             <div variant="outlined" className={classes.FformGroup}>
-              <Typography>Letter Authorization</Typography>
+              <Typography>E-wallet image</Typography>
               <input
                 type="file"
                 onChange={event =>
-                  handleFileChange(
-                    'letter_authorization',
-                    event.target.files[0]
+                  handleFileChange('e_wallet_image', event.target.files[0])
+                }
+              />
+              {previewFiles.e_wallet_image && (
+                <img className={classes.image} src={previewFiles.e_wallet_image} />
+              )}
+            </div>
+            <div variant="outlined" className={classes.FformGroup}>
+              <FormControlLabel 
+                control={<Checkbox color="primary" value={values.cash_active} 
+                onChange={event =>
+                  handleFieldChange(
+                    event,
+                    'cash_active',
+                    event.target.checked
                   )
-                }
-              />
-
-              {previewFiles.letter_authorization && (
-                <Link
-                  href={previewFiles.letter_authorization}
-                  target="_blank"
-                  rel="noreferrer">
-                  Download Now
-                </Link>
-              )}
-            </div>
-
-            <div variant="outlined" className={classes.FformGroup}>
-              <FormControlLabel
-                control={<Checkbox color="primary" value={values.is_halal} />}
-                label="Is halal?"
+                }/>}
+                label="Cash is active?"
               />
             </div>
-
             <div variant="outlined" className={classes.FformGroup}>
-              <FormControlLabel
-                control={<Checkbox color="primary" value={values.is_veg} />}
-                label="Is Veg?"
+              <FormControlLabel 
+                control={<Checkbox color="primary" value={values.eWalletM_active} 
+                onChange={event =>
+                  handleFieldChange(
+                    event,
+                    'eWalletM_active',
+                    event.target.checked
+                  )
+                }/>}
+                label="E Wallet (manual) is active?"
+              />
+            </div>
+            <div variant="outlined" className={classes.FformGroup}>
+              <FormControlLabel 
+                control={<Checkbox color="primary" value={values.online_active} 
+                onChange={event =>
+                  handleFieldChange(
+                    event,
+                    'online_active',
+                    event.target.checked
+                  )
+                }/>}
+                label="online is active?"
+              />
+            </div>
+            <div variant="outlined" className={classes.FformGroup}>
+              <FormControlLabel 
+                control={<Checkbox color="primary" value={values.fpx_active} 
+                onChange={event =>
+                  handleFieldChange(
+                    event,
+                    'fpx_active',
+                    event.target.checked
+                  )
+                }/>}
+                label="FPX is active?"
+              />
+            </div>
+            <div variant="outlined" className={classes.FformGroup}>
+              <FormControlLabel 
+                control={<Checkbox color="primary" value={values.eWallet_active} 
+                onChange={event =>
+                  handleFieldChange(
+                    event,
+                    'eWallet_active',
+                    event.target.checked
+                  )
+                }/>}
+                label="E wallet is active?"
               />
             </div>
           </form>
